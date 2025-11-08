@@ -5,6 +5,8 @@ import threading
 import queue
 import os
 import random
+from datetime import datetime
+
 from filelock import FileLock
 WORKER_PID_FILE = "workers.pid"
 QUEUE_FILE = "queue.json"
@@ -290,16 +292,31 @@ def main():
     config_get_parser.add_argument("key", help="Config key")
     args = parser.parse_args()
 
+
     if args.command == "enqueue":
         job_data = args.json or input("Paste JSON job:\n> ")
         try:
-            job = json.loads(job_data)
+            user_job = json.loads(job_data)
+            now = datetime.utcnow().strftime("%Y-%m-%dT%H:%M:%SZ")
+
+            job = {
+                "id": user_job.get("id"),
+                "command": user_job.get("command"),
+                "state": "pending",
+                "attempts": 0,
+                "max_retries": user_job.get("max_retries", 3),
+                "created_at": now,
+                "updated_at": now
+            }
+
             jobs = load_jobs(QUEUE_FILE)
             jobs.append(job)
-            save_jobs(QUEUE_FILE,jobs)
-            print(f"Enqueued job: {job.get('id')}")
+            save_jobs(QUEUE_FILE, jobs)
+            print(f"Enqueued job: {job['id']}")
+
         except json.JSONDecodeError as e:
             print(f"Invalid JSON input: {e}")
+
 
     elif args.command == "worker":
         if args.worker_cmd == "start":
