@@ -28,7 +28,7 @@ pip install filelock
 You can check all available commands using:
 
 ```bash
-python queuecli.py --help
+python queuectl.py --help
 ```
 
 ---
@@ -40,8 +40,8 @@ You must use the correct syntax based on your environment.
 
 | Environment                            | Example Command                                                                               | Works Because                                                                 |
 | -------------------------------------- | --------------------------------------------------------------------------------------------- | ----------------------------------------------------------------------------- |
-| **Windows PowerShell**                 | `powershell<br>python queuecli.py enqueue --json '{""id"":""job1"",""command"":""sleep 2""}'` | PowerShell interprets `""` as a literal `"`, producing valid JSON internally. |
-| **Windows CMD / Linux / macOS (Bash)** | `bash<br>python queuecli.py enqueue --json "{\"id\":\"job1\",\"command\":\"sleep 2\"}"`       | Escaped quotes (`\"`) are correctly passed to Python as `"` characters.       |
+| **Windows PowerShell**                 | `python queuectl.py enqueue --json '{""id"":""job1"",""command"":""sleep 2""}'` | PowerShell interprets `""` as a literal `"`, producing valid JSON internally. |
+| **Windows CMD / Linux / macOS (Bash)** | `python queuectl.py enqueue --json "{\"id\":\"job1\",\"command\":\"sleep 2\"}"`       | Escaped quotes (`\"`) are correctly passed to Python as `"` characters.       |
 
 Both commands produce this valid JSON input:
 
@@ -55,10 +55,10 @@ Both commands produce this valid JSON input:
 
 ```bash
 # PowerShell
-python queuecli.py enqueue --json '{""id"":""job5"",""command"":""echo Hello""}'
+python queuectl.py enqueue --json '{""id"":""job5"",""command"":""echo Hello""}'
 
 # CMD / Bash
-python queuecli.py enqueue --json "{\"id\":\"job5\",\"command\":\"echo Hello\"}"
+python queuectl.py enqueue --json "{\"id\":\"job5\",\"command\":\"echo Hello\"}"
 ```
 
 Both result in:
@@ -75,7 +75,7 @@ Enqueued job: job5
 
 ```
 QueueCTL/
-├── queuecli.py          # Main CLI script
+├── queuectl.py          # Main CLI script
 ├── queue.json           # Pending jobs
 ├── processed.json       # Successfully completed jobs
 ├── failed.json          # Dead Letter Queue (DLQ)
@@ -90,8 +90,7 @@ QueueCTL/
 ### 1. **Enqueue a Job**
 
 ```bash
-python queuecli.py enqueue --json '{"id":"job1","command":"echo Hello World"}'
-```
+python queuectl.py enqueue --json '{""id"":""job1"",""command"":""echo success""}'```
 
 **Output:**
 
@@ -104,7 +103,7 @@ Enqueued job: job1
 ### 2. **Start Worker(s)**
 
 ```bash
-python queuecli.py worker start --count 2
+python queuectl.py worker start --count 2
 ```
 
 **Output:**
@@ -151,9 +150,9 @@ Worker State   : Running
 ### 5. **List Jobs**
 
 ```bash
-python queuecli.py list --state pending
-python queuecli.py list --state processed
-python queuecli.py list --state failed
+python queuectl.py list --state pending
+python queuectl.py list --state processed
+python queuectl.py list --state failed
 ```
 
 ---
@@ -161,8 +160,8 @@ python queuecli.py list --state failed
 ### 6. **View and Retry DLQ Jobs**
 
 ```bash
-python queuecli.py dlq list
-python queuecli.py dlq retry job1
+python queuectl.py dlq list
+python queuectl.py dlq retry job1
 ```
 
 ---
@@ -170,9 +169,9 @@ python queuecli.py dlq retry job1
 ### 7. **Configuration Management**
 
 ```bash
-python queuecli.py config show
-python queuecli.py config set max_retries 5
-python queuecli.py config get backoff_base
+python queuectl.py config show
+python queuectl.py config set max_retries 5
+python queuectl.py config get backoff_base
 ```
 
 ---
@@ -241,11 +240,11 @@ You can validate all major flows directly from **PowerShell** using these comman
 
 | Test                     | Command                                                                                                                        | Expected Result                                                    |
 | ------------------------ | ------------------------------------------------------------------------------------------------------------------------------ | ------------------------------------------------------------------ |
-| **Enqueue valid job**    | `python queuecli.py enqueue --json '{""id"":""job1"",""command"":""echo success""}'`                                           | Job appears in `queue.json` and completes successfully.            |
-| **Enqueue failing job**  | `python queuecli.py enqueue --json '{""id"":""job2"",""command"":""invalidcmd""}'`                                             | Retries automatically and moves to `failed.json` after 3 attempts. |
-| **Parallel processing**  | `python queuecli.py worker start --count 3`<br>`python queuecli.py enqueue --json '{""id"":""job3"",""command"":""sleep 2""}'` | All jobs execute concurrently.                                     |
-| **DLQ retry**            | `python queuecli.py dlq retry job2`                                                                                            | Job requeued into `queue.json`.                                    |
-| **Configuration update** | `python queuecli.py config set max_retries 5`                                                                                  | Config updated and persisted in file.                              |
+| **Enqueue valid job**    | `python queuectl.py enqueue --json '{""id"":""job1"",""command"":""echo success""}'`                                           | Job appears in `queue.json` and completes successfully.            |
+| **Enqueue failing job**  | `python queuectl.py enqueue --json '{""id"":""job2"",""command"":""invalidcmd""}'`                                             | Retries automatically and moves to `failed.json` after 3 attempts. |
+| **Parallel processing**  | `python queuectl.py worker start --count 3`<br>`python queuectl.py enqueue --json '{""id"":""job3"",""command"":""sleep 2""}'` | All jobs execute concurrently.                                     |
+| **DLQ retry**            | `python queuectl.py dlq retry job2`                                                                                            | Job requeued into `queue.json`.                                    |
+| **Configuration update** | `python queuectl.py config set max_retries 5`                                                                                  | Config updated and persisted in file.                              |
 
 ## Summary
 
