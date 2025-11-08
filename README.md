@@ -91,8 +91,8 @@ QueueCTL/
 
 ```bash
 python queuectl.py enqueue --json '{""id"":""job1"",""command"":""echo success""}'```
-
-**Output:**
+```
+Output:
 Enqueued job: job1
 ```
 
