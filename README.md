@@ -33,7 +33,7 @@ python queuectl.py --help
 
 ---
 
-## 💡 Note on JSON Input (Important)
+## Note on JSON Input (Important)
 
 Different shells handle **quotes inside JSON strings** differently.
 You must use the correct syntax based on your environment.
