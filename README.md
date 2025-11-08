@@ -11,8 +11,8 @@ This project is implemented entirely using Python’s standard libraries (with `
 ### 1. Clone the Repository
 
 ```bash
-https://github.com/Rammjay/QueueCTL---Backend-Developer-Internship-Assignment.git
-cd QueueCTL---Backend-Developer-Internship-Assignment.git
+https://github.com/Rammjay/QueueCTL.git
+cd QueueCTL
 ```
 
 ### 2. Install Dependencies
