@@ -103,9 +103,9 @@ Enqueued job: job1
 
 ```bash
 python queuectl.py worker start --count 2
-**Output:**
-
 ```
+```bash
+Output:
 Worker-1 started.
 Worker-2 started.
 Started 2 worker(s).
