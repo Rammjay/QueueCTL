@@ -1,0 +1,66 @@
+import argparse
+import json
+import time
+import threading
+import queue
+import sys
+
+job_queue=queue.Queue()
+stop_event=queue.Queue()
+
+def worker_thread(worker_id):
+    print(f"Worker-{worker_id} started")
+    while not stop_event.is_set():
+        try:
+            job=job_queue.get(timeout=1)
+            print(f"Worker-{worker_id} executing:{job.get('command')}")
+            time.sleep(2)
+            print(f"Worker-{worker_id} finished: {job.get('id')}")
+            job_queue.task_done()
+        except queue.Empty:
+            continue
+    print(f"worker={worker_id} stopped gracefully.")
+
+def start_workers(count:int):
+    threads=[]
+    for i in range(count):
+        t= threading.Thread(target=worker_thread, args=(i+1,), daemon=True)
+        t.start()
+        threads.append(t)
+    print(f"started {count} worker(s). Press ctrl+c to st")
+
+def main():
+    parser = argparse.ArgumentParser(description="QueueCLI")
+    subparsers = parser.add_subparsers(dest="command", help="Commands")
+
+    # 'enqueue' command
+    enqueue_parser = subparsers.add_parser("enqueue", help="Add a job to the queue")
+    enqueue_parser.add_argument("job_data", help="Job data in JSON format")
+
+    worker_parser=subparsers.add_parser("worker",help="Worker")
+    worker_sub=worker_parser.add_subparsers(dest="worker_cmd",help="worker subcommands")
+
+    start_parser=worker_sub.add_parser("start",help="Start one or more workers")
+    start_parser.add_argument("--count",type=int, default=1,help="number of workers to start")
+
+    stop_parser=worker_sub.add_parser("stop",help="stop running workers")
+    args = parser.parse_args()
+
+    if args.command == "enqueue":
+        try:
+            # Parse the JSON input string into a Python dictionary
+            job = json.loads(args.job_data)
+            print("✅ Enqueued job:")
+            print(json.dumps(job, indent=2))  # Pretty-print the job
+        except json.JSONDecodeError as e:
+            print(f"❌ Invalid JSON input: {e}")
+    elif args.command=="worker":
+        if args.worker_cmd=="start":
+            start_workers(args.count)
+        elif args.worker_cmd=="stop":
+            print("to stop press ctrl+c")
+    else:
+        parser.print_help()
+
+if __name__ == "__main__":
+    main()
