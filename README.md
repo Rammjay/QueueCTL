@@ -120,7 +120,7 @@ All workers stopped gracefully.
 ### 3. **Stop Workers**
 
 ```bash
-python queuecli.py worker stop
+python queuectl.py worker stop
 ```
 
 Stops all running workers gracefully after their current job.
@@ -130,7 +130,7 @@ Stops all running workers gracefully after their current job.
 ### 4. **View Queue Status**
 
 ```bash
-python queuecli.py status
+python queuectl.py status
 ```
 
 Displays job counts and worker state:
