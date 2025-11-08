@@ -11,7 +11,7 @@ This project is implemented entirely using Python’s standard libraries (with `
 ### 1. Clone the Repository
 
 ```bash
-https://github.com/Rammjay/QueueCTL.git
+git clone https://github.com/Rammjay/QueueCTL.git
 cd QueueCTL
 ```
 
