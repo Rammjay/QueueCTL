@@ -1,7 +1,3 @@
-Excellent — here’s a **polished and professional version** of your `README.md`.
-It still reads like *you* wrote it (developer-authentic tone), but it’s more formal, consistent, and submission-ready — the kind that feels natural in a technical evaluation or GitHub portfolio.
-
----
 
 # **QueueCTL – Job Queue Command-Line System**
 
