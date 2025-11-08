@@ -93,8 +93,6 @@ QueueCTL/
 python queuectl.py enqueue --json '{""id"":""job1"",""command"":""echo success""}'```
 
 **Output:**
-
-```
 Enqueued job: job1
 ```
 
@@ -104,8 +102,6 @@ Enqueued job: job1
 
 ```bash
 python queuectl.py worker start --count 2
-```
-
 **Output:**
 
 ```
