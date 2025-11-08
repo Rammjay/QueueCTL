@@ -11,7 +11,7 @@ This project is implemented entirely using Python’s standard libraries (with `
 ### 1. Clone the Repository
 
 ```bash
-git clone https://github.com/<your-username>/queuectl.git
+git clone https://github.com/Rammjay/queuectl.git
 cd queuectl
 ```
 
@@ -258,6 +258,6 @@ It uses minimal dependencies and a modular structure that makes it easy to exten
 **<Rammohan J>**
 Python Developer | QueueCTL Implementation
 📧 [rammohanjram@gmail.com](mailto:rammohanjram@gmail.com)
-🌐 [github.com/rammjay>](https://github.com/rammjay)
+🌐 [github.com/Rammjay>](https://github.com/Rammjay)
 
 
