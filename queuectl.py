@@ -6,6 +6,7 @@ import queue
 import os
 import random
 from filelock import FileLock
+WORKER_PID_FILE = "workers.pid"
 QUEUE_FILE = "queue.json"
 CONFIG_FILE = "config.json"
 STOP_FILE="stop.flag"
@@ -110,6 +111,9 @@ def start_workers(count: int):
     if os.path.exists(STOP_FILE):
         os.remove(STOP_FILE)
 
+    with open(WORKER_PID_FILE, "w") as f:
+        f.write(str(os.getpid()))
+
     threads = []
     for i in range(count):
         t = threading.Thread(target=worker_thread, args=(i + 1, config), daemon=True)
@@ -131,34 +135,46 @@ def start_workers(count: int):
 
     if os.path.exists(STOP_FILE):
         os.remove(STOP_FILE)
+    if os.path.exists(WORKER_PID_FILE):
+        os.remove(WORKER_PID_FILE)
+
     print("All workers stopped gracefully.")
 
 def stop_workers():
     with open(STOP_FILE, "w") as f:
         f.write("stop")
-    print("stop signal sent, workers will stop within a second.")
-    time.sleep(1)
-    if os.path.exists(STOP_FILE):
-        os.remove(STOP_FILE)
 
+    print("Stop signal sent, workers will stop within a second.")
+    time.sleep(1)
+
+    if os.path.exists(WORKER_PID_FILE):
+        os.remove(WORKER_PID_FILE)
+
+
+import psutil  
 def status_workers():
-    pending=load_jobs(QUEUE_FILE)
-    processed=load_jobs(PROCESSED_FILE)
-    failed=load_jobs(FAILED_FILE)
-    worker_state = "Running" if not os.path.exists(STOP_FILE) else "Stopped"
+    pending = load_jobs(QUEUE_FILE)
+    processed = load_jobs(PROCESSED_FILE)
+    failed = load_jobs(FAILED_FILE)
+
+    if os.path.exists(WORKER_PID_FILE):
+        with open(WORKER_PID_FILE, "r") as f:
+            pid = int(f.read().strip())
+        if psutil.pid_exists(pid):
+            worker_state = f"Running (PID {pid})"
+        else:
+            worker_state = "Stopped"
+    else:
+        worker_state = "Stopped"
 
     print("\nQueue Status Summary")
     print("-" * 35)
     print(f"Pending Jobs   : {len(pending)}")
     print(f"Processed Jobs : {len(processed)}")
-    print(f"Failed Jobs : {len(failed)}")
-    print(f"Worker State  : {worker_state}")
+    print(f"Failed Jobs    : {len(failed)}")
+    print(f"Worker State   : {worker_state}")
     print("-" * 35)
-    if pending:
-        print("Pending Job Details:")
-        for job in pending:
-            print(f"   • {job.get('id')} → {job.get('command')}")
-    print("-" * 35)
+
 def list_jobs(state):
     if state=='pending':
         jobs=load_jobs(QUEUE_FILE)
